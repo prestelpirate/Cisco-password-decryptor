@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Type 7 password decrypter</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    	<link rel="stylesheet" href="basic.css" type="text/css" />
+    	<meta name="Generator" content="Nokia WDE 3.2.0" />
+		
+		<script language="JavaScript" type="text/javascript">
+var xlat = new Array("64","73","66","64","3B","6B","66","6F","41","2C","2E","69","79","65","77","72","6B","6C","64","4A","4B","44","48","53","55","42");
+function decodeHex(s) {
+  var res = 0;
+  var i;
+  for (i=0; i < s.length; i++) {
+    var x = "0123456789ABCDEF".indexOf(s.charAt(i));
+    if ((x < 0) || (x > 15)) {
+      x = 0;
+    }
+    res = (res << 4) | x;
+  }
+  return res;
+}
+function decryptpw() {
+  var enc = document.getElementById("encrypted").value;
+  var dec = "";
+  var len = enc.length;
+  if ((len >= 4) && ((len % 2) == 0)) {
+    var index = parseInt(enc.substring(0, 2));
+    if ((index >= 0) && (index <= 15)) {
+      var i;
+      for (i=2; i < len; i += 2) {
+        dec = dec + String.fromCharCode(decodeHex(enc.substring(i, i+2))^decodeHex(xlat[index++]));
+        if (index > xlat.length) {
+          index = 0;
+        }
+      }
+    } else {
+      dec = "Invalid Seed";
+    }
+  } else {
+    dec = "Invalid Input";
+  }
+  document.getElementById("decrypted").value = dec;
+}
+</script>
+
+		
+	</head>
+	<body onload="init();">
+		
+		<center></center><h1>Cisco Type 7 password decrypter</h1></center>
+		
+		<center><img src="mini_padlock.jpg" alt="" /></center>
+		
+		<p>Cisco's IOS uses two different types of encryption for passwords - type 5 (MD5) and type 7 (an older, insecure proprietary encryption implementation).
+		</p>
+		<p>This utility allows you to decrypt Cisco Type 7 password strings. They will normally appear in the IOS config as:
+		<br><br>
+		username admin password 7 046E1803362E595C260E0B240619050A2D
+		</p>
+		
+		<hr>
+		
+		<p>
+Enter your Type 7 password string below and click the Decrypt button to display the plaintext:
+</p>
+<p>
+
+Encrypted Password: <input type="text" id="encrypted" value="" size="20" maxlength="128">
+<br>
+<input type="submit" value="Decrypt >>" onClick="decryptpw(); return false;"><br>
+Decrypted Password: <input type="text" id="decrypted" value="" size="20"><br>
+</p>
+
+		
+	</body>
+</html>
